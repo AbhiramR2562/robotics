@@ -17,11 +17,13 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // Rotation Animation
   late AnimationController _rotationcontroller;
   late Animation<double> _rotationAnimation;
+
+  // Spinner Animation
+  late AnimationController _spinnerController;
 
   // Initialize Bloc
   late UsersBloc _usersBloc;
@@ -47,6 +49,12 @@ class _HomePageState extends State<HomePage>
       CurvedAnimation(parent: _rotationcontroller, curve: Curves.easeInOut),
     );
 
+    // Spinner (Loader)
+    _spinnerController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    )..repeat();
+
     // Listener for when the user scrolls to the bottom
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
@@ -64,6 +72,7 @@ class _HomePageState extends State<HomePage>
     _scrollController.dispose();
     _usersBloc.close();
     _rotationcontroller.dispose();
+    _spinnerController.dispose();
     super.dispose();
   }
 
@@ -212,14 +221,17 @@ class _HomePageState extends State<HomePage>
                           if (index == state.users.length) {
                             // Done loading more
                             _isFetchingMore = false;
-                            return const Padding(
+                            return Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
                               child: Center(
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CircularProgressIndicator(
-                                      color: kPrimaryColor,
+                                    RotationTransition(
+                                      turns: _spinnerController,
+                                      child: SvgPicture.asset(
+                                        'assets/icons/Spinner.svg',
+                                      ),
                                     ),
                                     SizedBox(width: 10),
                                     Text(
