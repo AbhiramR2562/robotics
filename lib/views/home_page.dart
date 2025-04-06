@@ -214,7 +214,21 @@ class _HomePageState extends State<HomePage>
                             _isFetchingMore = false;
                             return const Padding(
                               padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Center(child: CircularProgressIndicator()),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      color: kPrimaryColor,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "Load More",
+                                      style: TextStyle(color: kPrimaryColor),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             );
                           }
 
